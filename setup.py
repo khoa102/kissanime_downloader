@@ -1,5 +1,9 @@
 from setuptools import setup
 
+def readme():
+    with open('README.rst') as f:
+        return f.read()
+    
 setup(name='kissanime_downloader',
       version='0.2',
       description='A program to download anime episode from Kissanime',
