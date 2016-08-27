@@ -1,6 +1,6 @@
 Install instruction
 
-Python version 2.7
+Python version 2.7\n
 Download the zip 
 Extract it
 Install it locally with the command: pip install . 
