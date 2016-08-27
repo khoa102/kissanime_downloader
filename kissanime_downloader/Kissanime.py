@@ -61,7 +61,7 @@ class Kissanime():
             else:
                 dl = 0
                 totalLength = int(totalLength)
-                for data in response.iter_content(1024*1024*1024):
+                for data in response.iter_content(1024*1024):
                     dl += len(data)
                     video.write(data)
                     done = int(50* dl/totalLength)
