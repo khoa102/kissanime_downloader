@@ -3,6 +3,7 @@
 <strong>Requires: </strong>Python version 2.7
 
 STEP:
+
 1. Download the zip
 
 2. Extract it
