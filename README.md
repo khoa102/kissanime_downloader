@@ -8,6 +8,6 @@ STEP:
 
 2. Extract it
 
-3. Install it locally with the command: pip install .
+3. Install it locally with the command: "pip install ."
 
 **Note**: Run the above command inside the folder that is extracted from the zip file
