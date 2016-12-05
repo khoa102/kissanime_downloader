@@ -1,4 +1,4 @@
-<bold>Install instruction</bold>
+Install instruction
 
 Python version 2.7 
 
