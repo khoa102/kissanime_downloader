@@ -10,11 +10,11 @@ from subprocess import call
 
 class Kissanime():
     scraper = cfscrape.create_scraper(js_engine="Node")
-    EPISODES_PREFIX = 'https://kissanime.to'
-    
+    EPISODES_PREFIX = 'https://kissanime.ru'
+
     def __init__(self):
         pass
-        
+
     def loadMenuPage(self,url):
         page = self.scraper.get(url)
         tree = html.fromstring(page.content)
@@ -68,7 +68,7 @@ class Kissanime():
                     percentage = int(100 * dl/totalLength)
                     sys.stdout.write("\r[%s%s]" % ('=' * done, ' ' * (50-done)) + str(percentage) + '%')
                     sys.stdout.flush()
-        print            
+        print
 
 def main():
     # Declare variable for the program
@@ -82,13 +82,13 @@ def main():
     chosenQuality = None  # Store the chosen quality
     option = None         # Store the download option
     episodeDownloaded = None # Store the number of episodes downloaded
-    downloadLink = None   # Store the link for download 
+    downloadLink = None   # Store the link for download
     kissanime = Kissanime()
 
     ### (Check) Update cfsrape in shell
     call("pip install cfscrape --upgrade",shell = True)
     call("clear", shell = True)
-    
+
     # Welcoming message
     print ("Hello guys, this is a program to download anime from kissanime")
     print ("Please input the url for the main page of your anime: ")
@@ -97,14 +97,14 @@ def main():
 
     #Retrieve the dictionary of episodes
     episodesDict = kissanime.loadMenuPage(url)
-    
+
     # Retrieve the list of names of episode
     print " Here is a list of episodes for this anime: "
     name = kissanime.getEpisodesName()
     for i in range(0,len(name)):
         print str(i) + '. ' + name[i]
     print;
-    
+
     # Show options
     print "What do you want to do?"
     print "  1. Download 1 episode"
@@ -134,14 +134,14 @@ def main():
             episodeURL = kissanime.getEpisodeURL(episode)
             print "You chose " + name[episode]
             print
-            
+
             # Retrieve the list (dictionary) of quality
             kissanime.loadEpisodePage(episodeURL)
             quality = kissanime.getEpisodeQuality()
             print "Choose one of the quality below (input the integer number): "
             for i in range(0,len(quality)):
                 print str(i) + ". " + quality[i]
-            
+
             # Choose a quality
             chosenQuality = int(raw_input())
             while ((chosenQuality < 0) or (chosenQuality>=len(quality)) or (type(chosenQuality) != int)):
@@ -149,7 +149,7 @@ def main():
                 chosenQuality = int(raw_input())
             downloadLink = kissanime.getDownloadLink(chosenQuality)
             print "You chose " + quality[chosenQuality]
-            
+
             # Download the episode
             print "Currently Downloading " + name[episode] +": "
             kissanime.download(name[episode] + ".mp4",downloadLink)
@@ -157,14 +157,14 @@ def main():
             episodeURL = []
             downloadLink = []
             downloadedName = []
-            
+
             # Number of episodes downloaded?
             print "How many episodes do you want to download? "
             episodeDownloaded = int(raw_input())
             while ((episodeDownloaded <0) or (episodeDownloaded >= len(name)) or (type(episodeDownloaded) != int)):
                 print "Please give a valid number of episode"
                 episodeDownloaded = int(raw_input())
-            
+
             # Make a list of name of the chosen episodes
             print "Choose one of episode above (input the integer number): "
             for i in range(0,episodeDownloaded):
@@ -176,7 +176,7 @@ def main():
                 episodeURL.append(kissanime.getEpisodeURL(episode))
                 downloadedName.append(name[episode])
             print;
-            
+
             # Retrieve the list (dictionary) of quality
             kissanime.loadEpisodePage(episodeURL[0])
             quality = kissanime.getEpisodeQuality()
@@ -189,7 +189,7 @@ def main():
             while ((chosenQuality < 0) or (chosenQuality>=len(quality)) or (type(chosenQuality) != int)):
                 print "Wrong choice! Please give a valide quality choice: "
                 chosenQuality = int(raw_input())
-                
+
             for i in range(0, episodeDownloaded):
                 kissanime.loadEpisodePage(episodeURL[i])
                 downloadLink.append(kissanime.getDownloadLink(chosenQuality))
@@ -202,39 +202,39 @@ def main():
         elif option == 3:
             episodeURL = []
             downloadLink = []
-            
+
             for i in range(0,len(name)):
                 episodeURL.append(kissanime.getEpisodeURL(i))
             print episodeURL
-            
+
             # Retrieve the list (dictionary) of quality
             kissanime.loadEpisodePage(episodeURL[0])
             quality = kissanime.getEpisodeQuality()
             print "Choose one of the quality below (input the integer number): "
             for i in range(0,len(quality)):
                 print str(i) + ". " + quality[i]
-                
+
             # Choose a quality
             chosenQuality = int(raw_input())
             while ((chosenQuality < 0) or (chosenQuality>=len(quality)) or (type(chosenQuality) != int)):
                 print "Wrong choice! Please give a valide quality choice: "
                 chosenQuality = int(raw_input())
-                
+
             for i in range(0, len(name)):
                 kissanime.loadEpisodePage(episodeURL[i])
                 downloadLink.append(kissanime.getDownloadLink(chosenQuality))
-                
+
             # Download all the episode with cosen quality
             for i in range(0,len(name)):
                 print "Currently Downloading " + str(name[i]) + ": "
                 kissanime.download(name[i] + ".mp4", downloadLink[i])
-                
+
         elif option == 4:
             break
         else:
             pass
             # Print and ask for option again
-    
-    
+
+
 if __name__ == '__main__':
     main()
