@@ -18,11 +18,9 @@ class Kissanime():
     def loadMenuPage(self,url):
         page = self.scraper.get(url)
         tree = html.fromstring(page.content)
-        episodes = tree.xpath('//table[@class="listing"]/tr/td//@href')
+        self.episodes = tree.xpath('//table[@class="listing"]/tr/td//@href')
         self.episodesName = tree.xpath('//table[@class="listing"]/tr/td/a/text()')
         self.episodesName = [x.strip() for x in self.episodesName]
-        self.episodesDict = OrderedDict(zip(self.episodesName,episodes))
-        return self.episodesDict
 
     def loadEpisodePage(self,url):
         page = self.scraper.get(url)
@@ -37,8 +35,7 @@ class Kissanime():
         return self.episodesName
 
     def getEpisodeURL(self, episodeNum):
-        name = self.episodesName[episodeNum]
-        episodeURL = self.EPISODES_PREFIX + self.episodesDict[name]
+        episodeURL = self.EPISODES_PREFIX + self.episodes[episodeNum]
         return episodeURL
 
     def getEpisodeQuality(self):
@@ -94,8 +91,8 @@ def main():
     url = raw_input()
     print;
 
-    #Retrieve the dictionary of episodes
-    episodesDict = kissanime.loadMenuPage(url)
+    # Load the url into the kissanime object
+    kissanime.loadMenuPage(url)
     
     # Retrieve the list of names of episode
     print " Here is a list of episodes for this anime: "
