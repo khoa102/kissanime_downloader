@@ -20,7 +20,7 @@ class Kissanime():
         tree = html.fromstring(page.content)
         episodes = tree.xpath('//table[@class="listing"]/tr/td//@href')
         self.episodesName = tree.xpath('//table[@class="listing"]/tr/td/a/text()')
-        self.episodesName = [x.strip() for x in episodesName]
+        self.episodesName = [x.strip() for x in self.episodesName]
         self.episodesDict = OrderedDict(zip(self.episodesName,episodes))
         return self.episodesDict
 
