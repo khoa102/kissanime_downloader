@@ -43,6 +43,9 @@ class KissanimeGUI(QWidget):
         # Create add URL button with its caption
         self.urlButton = QPushButton('&Add URL',self)
 
+        # Connect the URL button to a function when clicked
+        self.urlButton.clicked.connect(self.addURL())
+
         # Add the button the sixth column of the grid
         self.layout.addWidget(self.urlButton,0,6)
 
