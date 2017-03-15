@@ -7,39 +7,49 @@ import requests
 import sys
 from collections import OrderedDict
 from subprocess import call
+from episode import episode
 
 class Kissanime():   
     def __init__(self):
         self.scraper = cfscrape.create_scraper(js_engine="Node")
         self.EPISODES_PREFIX = 'https://kissanime.ru'
         self.episodesName = None; # Storing the name of the episode
-        self.episodes = None; # Storing the episode URL of the episodes
+        self.episodes = []; # Storing the episode URL of the episodes
         
     def loadMenuPage(self,url):
-        page = self.scraper.get(url)
+        page = self.scraper.get(url.strip())
         tree = html.fromstring(page.content)
-        self.episodes = tree.xpath('//table[@class="listing"]/tr/td//@href')
-        self.episodesName = tree.xpath('//table[@class="listing"]/tr/td/a/text()')
-        self.episodesName = [x.strip() for x in self.episodesName]
+        episodes = tree.xpath('//table[@class="listing"]/tr/td//@href')
+        episodesName = tree.xpath('//table[@class="listing"]/tr/td/a/text()')
+        episodesName = [x.strip() for x in episodesName]
+        for i in range(0, len(episodesName)):
+        	temp = episode()
+        	temp.name = episodesName[i]
+        	temp.URL = self.EPISODES_PREFIX + episodes[i]
+        	self.episodes.append(temp)
 
-    def loadEpisodePage(self,url):
-        page = self.scraper.get(url)
+    def loadEpisodePage(self, num):
+        page = self.scraper.get(self.episodes[num].URL)
         tree = html.fromstring(page.content)
-        links = tree.xpath('//select[@id="selectQuality"]/option//@value')
-        quality = tree.xpath('//select[@id="selectQuality"]/option/text()')
+        links = tree.xpath('//select[@id="slcQualix"]/option//@value')
+        quality = tree.xpath('//select[@id="slcQualix"]/option/text()')
         videoLink = [base64.b64decode(x)for x in links]
         self.videoDict = OrderedDict(zip(quality,videoLink))
-        return self.videoDict;
+        for i in range(0, len(quality)):
+        	self.episodes[num].setDownloadLink(quality[i], videoLink[i])
+        
 
     def getEpisodesName(self):
-        return self.episodesName
+        episodesName = [self.episodes[x].name for x in range (0, len(self.episodes))]
+        return episodesName
 
     def getEpisodeURL(self, episodeNum):
-        episodeURL = self.EPISODES_PREFIX + self.episodes[episodeNum]
+        episodeURL = self.episodes[episodeNum].URL
         return episodeURL
 
     def getEpisodeQuality(self):
         self.quality = self.videoDict.keys()
+        print self.quality
         return self.quality
 
     def getDownloadLink(self, qualityNum):
@@ -132,7 +142,7 @@ def main():
             print
             
             # Retrieve the list (dictionary) of quality
-            kissanime.loadEpisodePage(episodeURL)
+            kissanime.loadEpisodePage(episode)
             quality = kissanime.getEpisodeQuality()
             print "Choose one of the quality below (input the integer number): "
             for i in range(0,len(quality)):
@@ -150,7 +160,7 @@ def main():
             print "Currently Downloading " + name[episode] +": "
             kissanime.download(name[episode] + ".mp4",downloadLink)
         elif option == 2:
-            episodeURL = []
+            episodeNum = []
             downloadLink = []
             downloadedName = []
             
@@ -169,12 +179,12 @@ def main():
                 while ((episode < 0) or (episode >= len(name)) or (type(episode) != int)):
                     print "Wrong choice! Please give a valid episode number:"
                     episode = int(raw_input())
-                episodeURL.append(kissanime.getEpisodeURL(episode))
+                episodeNum.append(episode)
                 downloadedName.append(name[episode])
             print;
             
             # Retrieve the list (dictionary) of quality
-            kissanime.loadEpisodePage(episodeURL[0])
+            kissanime.loadEpisodePage(episodeNum[0])
             quality = kissanime.getEpisodeQuality()
             print "Choose one of the quality below (input the integer number): "
             for i in range(0,len(quality)):
@@ -187,7 +197,7 @@ def main():
                 chosenQuality = int(raw_input())
                 
             for i in range(0, episodeDownloaded):
-                kissanime.loadEpisodePage(episodeURL[i])
+                kissanime.loadEpisodePage(episodeNum[i])
                 downloadLink.append(kissanime.getDownloadLink(chosenQuality))
             print;
 
@@ -196,18 +206,18 @@ def main():
                 print "Currently Downloading " + str(downloadedName[i]) +": "
                 kissanime.download(downloadedName[i] + ".mp4",downloadLink[i])
         elif option == 3:
-            episodeURL = []
+            episodeNum = []
             downloadLink = []
 
             
             for i in range(0,len(name)):
-                episodeURL.append(kissanime.getEpisodeURL(i))
+                episodeNum.append(i)
 
             # Check to see if the code works
             #print episodeURL
             
             # Retrieve the list (dictionary) of quality
-            kissanime.loadEpisodePage(episodeURL[0])
+            kissanime.loadEpisodePage(episodeNum[0])
             quality = kissanime.getEpisodeQuality()
             print "Choose one of the quality below (input the integer number): "
             for i in range(0,len(quality)):
@@ -220,7 +230,7 @@ def main():
                 chosenQuality = int(raw_input())
                 
             for i in range(0, len(name)):
-                kissanime.loadEpisodePage(episodeURL[i])
+                kissanime.loadEpisodePage(episodeNum[i])
                 downloadLink.append(kissanime.getDownloadLink(chosenQuality))
                 
             # Download all the episode with cosen quality
