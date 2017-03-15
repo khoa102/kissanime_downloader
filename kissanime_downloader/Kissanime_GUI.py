@@ -44,7 +44,7 @@ class KissanimeGUI(QWidget):
         self.urlButton = QPushButton('&Add URL',self)
 
         # Connect the URL button to a function when clicked
-        self.urlButton.clicked.connect(self.addURL())
+        self.urlButton.clicked.connect(self.addURL)
 
         # Add the button the sixth column of the grid
         self.layout.addWidget(self.urlButton,0,6)
@@ -73,8 +73,13 @@ class KissanimeGUI(QWidget):
         # Add the progress bar to the layout
         self.layout.addWidget(self.progressBar, 2, 1, 1, 5)
         
+        # Declare a list of combo box and checkbox
+        self.comboBox = None;
+        self.checkbox = None;
+
         # Set the Grid layout as the main window's main layout
         self.setLayout(self.layout)
+
 
     def addURL(self):
          pass       

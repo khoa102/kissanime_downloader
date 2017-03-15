@@ -8,7 +8,7 @@ import sys
 from collections import OrderedDict
 from subprocess import call
 
-class Kissanime():    
+class Kissanime():   
     def __init__(self):
         self.scraper = cfscrape.create_scraper(js_engine="Node")
         self.EPISODES_PREFIX = 'https://kissanime.ru'
